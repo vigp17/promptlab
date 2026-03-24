@@ -1,5 +1,7 @@
 # promptlab ⚡
 
+![promptlab demo](demo.gif)
+
 Automated testing for LLM prompts. Write test cases in YAML, run them against Claude or OpenAI, get pass/fail results in your terminal.
 
 **Like pytest, but for prompts.**
