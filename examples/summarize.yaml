@@ -1,0 +1,34 @@
+prompt: |
+  Summarize this text in 2-3 sentences:
+  {{ text }}
+
+model: claude-sonnet-4-20250514
+temperature: 0
+max_tokens: 200
+
+tests:
+  - name: short_summary
+    vars:
+      text: |
+        The Federal Reserve held interest rates steady on Wednesday,
+        keeping the benchmark rate in the 5.25%-5.50% range. Chair
+        Jerome Powell said the committee needs more confidence that
+        inflation is moving toward the 2% target before cutting rates.
+        Markets had been expecting a cut, but Powell's comments suggest
+        the Fed will wait for more data before making any changes.
+    assert:
+      - type: contains
+        value: "Federal Reserve"
+      - type: contains
+        value: "rate"
+      - type: max_tokens
+        value: 80
+
+  - name: handles_short_input
+    vars:
+      text: "The sky is blue."
+    assert:
+      - type: min_length
+        value: 10
+      - type: max_tokens
+        value: 50
