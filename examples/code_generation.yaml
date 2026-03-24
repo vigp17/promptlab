@@ -1,0 +1,45 @@
+prompt: |
+  Write a Python function that {{ task }}.
+  Return only the code, no explanation.
+
+model: claude-sonnet-4-20250514
+temperature: 0
+max_tokens: 500
+
+tests:
+  - name: generates_valid_function
+    vars:
+      task: "takes a list of numbers and returns the average"
+    assert:
+      - type: contains
+        value: "def "
+      - type: contains
+        value: "return"
+      - type: regex
+        value: "def \\w+\\("
+      - type: not_contains
+        value: "```"
+
+  - name: handles_edge_case_description
+    vars:
+      task: "reverses a string without using built-in reverse methods"
+    assert:
+      - type: contains
+        value: "def "
+      - type: contains
+        value: "return"
+      - type: not_contains
+        value: "[::-1]"
+      - type: not_contains
+        value: ".reverse()"
+
+  - name: no_markdown_wrapping
+    vars:
+      task: "checks if a number is prime"
+    assert:
+      - type: not_contains
+        value: "```python"
+      - type: not_contains
+        value: "```"
+      - type: starts_with
+        value: "def"

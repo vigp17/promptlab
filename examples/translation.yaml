@@ -1,0 +1,51 @@
+prompt: |
+  Translate the following {{ source_lang }} text to {{ target_lang }}.
+  Return only the translation, nothing else.
+
+  Text: {{ text }}
+
+model: claude-sonnet-4-20250514
+temperature: 0
+max_tokens: 300
+
+tests:
+  - name: english_to_spanish
+    vars:
+      source_lang: "English"
+      target_lang: "Spanish"
+      text: "The weather is beautiful today. Let's go to the park."
+    assert:
+      - type: not_contains
+        value: "weather"
+      - type: not_contains
+        value: "park"
+      - type: min_length
+        value: 20
+      - type: llm_judge
+        value: "Is this a natural-sounding Spanish translation? Answer YES or NO."
+
+  - name: preserves_numbers
+    vars:
+      source_lang: "English"
+      target_lang: "French"
+      text: "The meeting is at 3:30 PM on March 15, 2026."
+    assert:
+      - type: contains
+        value: "3"
+      - type: contains
+        value: "15"
+      - type: contains
+        value: "2026"
+
+  - name: no_extra_commentary
+    vars:
+      source_lang: "English"
+      target_lang: "German"
+      text: "Please close the door."
+    assert:
+      - type: not_contains
+        value: "Translation:"
+      - type: not_contains
+        value: "Here is"
+      - type: max_tokens
+        value: 20

@@ -1,0 +1,49 @@
+prompt: |
+  Extract the following information from this text and return valid JSON only.
+  No markdown, no explanation, just the JSON object.
+
+  Text: {{ text }}
+
+  Return JSON with keys: name, age, occupation, location
+
+model: claude-sonnet-4-20250514
+temperature: 0
+max_tokens: 200
+
+tests:
+  - name: extracts_structured_data
+    vars:
+      text: "John Smith is a 34-year-old software engineer living in San Francisco."
+    assert:
+      - type: contains
+        value: "John Smith"
+      - type: contains
+        value: "34"
+      - type: regex
+        value: '"name"'
+      - type: regex
+        value: '"age"'
+      - type: not_contains
+        value: "```"
+
+  - name: handles_missing_fields
+    vars:
+      text: "Maria works as a teacher."
+    assert:
+      - type: contains
+        value: "Maria"
+      - type: contains
+        value: "teacher"
+      - type: regex
+        value: '"name"'
+
+  - name: output_is_valid_json
+    vars:
+      text: "Alex Chen, 28, is a data scientist based in New York City."
+    assert:
+      - type: starts_with
+        value: "{"
+      - type: regex
+        value: "\\{.*\\}"
+      - type: not_contains
+        value: "Here is"
